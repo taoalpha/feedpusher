@@ -1,0 +1,21 @@
+{
+  "name": "feedpusher_spider",
+  "description": "spider for feedpusher",
+  "main": "index.js",
+  "authors": [
+    "taoalpha"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "spider"
+  ],
+  "homepage": "https://github.com/zzgary/feedpusher",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
