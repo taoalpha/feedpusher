@@ -1,0 +1,148 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" charset="UTF-8">
+    <title>Feedpusher</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="css/jquery.contextMenu.css">
+    <script src="js/jquery-1.10.1.min.js"></script>
+    <script src="js/jquery.contextMenu.js"></script>
+    <script src="js/share.min.js"></script>
+    <script src="js/commonpart.js"></script>
+    <script src="js/me.js"></script>
+    <style type="text/css" media="all">
+        label.entypo-export{
+            width: 40px !important;
+            height: 40px !important;
+            display: block !important;
+            opacity: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="login">
+        <input type="text" id="username" placeholder="Enter Your Username.">
+        <input type="password" id="passw" placeholder="Enter Your Password.">
+        <button class="loginbutton">Log In</button>
+        <button class="signinbutton">New User</button>
+    </div>
+    <div class="loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+    </div>
+    <div class="leftbar">
+        <div class="add">
+            <form action="">
+                <!-- <label for="novelname">Add a novel:</label> -->
+                <input id='auto' type="text" placeholder="searching, adding, saving or downloading...">
+            </form>
+        </div>
+        <div class="help">
+            <div class="qaitem">
+                <div class="qatitle">Q1:  What this app is about?</div>
+                <div class="qaanswer">
+                    <ul>
+                        <li>Subscribe your novel;</li>
+                        <li>Subscribe rss you like;</li>
+                        <li>Notified when feed update;</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qaitem">
+                <div class="qatitle">Q2:  The basic usage of the app?</div>
+                <div class="qaanswer">
+                    <ul>
+                        <li>Enter novel's name from the <b>tieba:</b>;</li>
+                        <li>Enter the rss's link;</li>
+                        <li>Enter anything to search;</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="qaitem">
+                <div class="qatitle">Q3:  The advance usage of the app?</div>
+                <div class="qaanswer">
+                    <ul>
+                        <li><strong>Help:</strong>    enter <b>help:</b> see me again!</li>
+                        <li><strong>See Stars:</strong>   enter <b>star:</b> to see items you marked;</li>
+                        <li><strong>See collection:</strong>  enter <b>collection:</b> to search rss;</li>
+                        <li><strong>Logout:</strong>  enter <b>logout</b> to logout;</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="qaitem">
+                <div class="qatitle">Q4:  Contact the author?</div>
+                <div class="qaanswer">
+                    <ul>
+                        <li>Any questions you met, email me: <a href="mailto:zzgary92@gmail.com?subject=Mail for the Allfeed" target="_blank">zzgary92@gmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="backto backbutton">Back</div>
+        </div>
+        <div class="searchwrap">
+            <div class="searchresults">
+        <!--         <div class="searchitem">
+                    <h3><b>SS</b> United States Conservancyssssss</h3>
+                    <p>"Click here to visit author David Macaulay&#39;s <b>SS</b> United States blog &middot; Click here to <br> watch the <b>SS</b> United States Conservancy Featured on CBS Sunday Morning"...</p>
+                    <div>
+                        <span>
+                            <a href="http://www.ssusc.org/">Source</a>
+                        </span>
+                        <span>
+                            <a href="http://www.ssusc.org/feed/">Add To</a>
+                        </span>
+                    </div>
+                </div> -->
+            </div>
+            <div class="backto backbutton">Back</div>
+        </div>
+        <div class="wrap">
+            <div id="content">
+                <!-- <div class="novel">
+                    <div class="name">
+                        <a href="http://tieba.baidu.com/f?kw=%CD%EA%C3%C0%CA%C0%BD%E7%D0%A1%CB%B5" target='_blank'>完美世界</a>
+                        <span class="del">X</span>
+                    </div>
+                    <div class="chapters">
+                        <ul class="novelupdate">
+                        </ul>
+                    </div>
+                </div> -->
+            </div>
+        <div class="moreitem backbutton">more</div>
+        </div>
+        <!-- <div class="clearall">Clear All Data</div> -->
+    </div>
+    <div class="rightbar">
+        <div class="loading"></div>
+        <img id="bgbg"></img>
+        <a class="saveas">Save Image</a>
+        <span class="markcollect collectit"></span>
+  <div class="pagen">
+      <i class="sprite sprite-link"></i>
+      <i class="sprite sprite-r"></i>
+      <i class="sprite sprite-prev"></i>
+      <i class="sprite sprite-next"></i>
+      <i class="sprite sprite-forward"></i>
+      <i class="sprite sprite-back"></i>
+      <i class="sprite sprite-share"></i>
+  </div>
+        <webview id="webv"></webview>
+    </div>
+    <div class="saving"></div>
+</body>
+</html>

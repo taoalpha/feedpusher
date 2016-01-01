@@ -1,0 +1,2 @@
+$.feedpusher({platform:"chromeapp"});
+
