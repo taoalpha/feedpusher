@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "google-feed": "0.0.10",
+    "moment": "^2.10.6",
     "mongodb": "^2.1.2"
   }
 }
