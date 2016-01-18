@@ -47,17 +47,18 @@ class FeedSpider{
   updateDuration(feedUrls){
     return Promise.all(feedUrls.map( (feedUrl) => {
       return this.siteC.findOne({feedUrl:feedUrl}).then( (doc) =>{
-        var duration = doc.lastUpdateDuration
-        if(this.stats.entries[feedUrl]===0){
+        var duration = doc.lastUpdateDuration,
+            numUpdates = this.stats.entries[feedUrl]
+        if(numUpdates===0){
           // increase the duration if no updates
           duration *= 1.5
         }else{
-          // decrease the duration if there are updates during the last crawl
-          duration *= 0.5
+          // decrease the duration according to the number of updates it has during the last crawl
+          duration *= 0.5*(Math.floor( 1 / Math.max(1,(numUpdates - 5)/10)))
         }
         // set the upper and lower limit for duration, and also only keep 3 numbers after the period
-        duration > 100 ? duration=100 : duration=Number(duration).toFixed(3)
-        duration < 0.1 ? duration=0.1 : duration=Number(duration).toFixed(3)
+        duration = duration > 100 ? 100 : Number(duration).toFixed(3)
+        duration = duration < 0.1 ? 0.1 : Number(duration).toFixed(3)
         this.siteC.update({feedUrl: feedUrl},{$set:{lastUpdateDuration:Number(duration)}})
       })
     }) )
@@ -80,7 +81,7 @@ class FeedSpider{
       data = tdata
       if(user){
         // update user subscribe list
-        _this.updateUserSub(user,tdata.feed.feedUrl)
+        _this.updateUser(user,{$addToSet:{subscribe:tdata.feed.feedUrl}})
       }
       return _this.siteC.count({'feedUrl':tdata.feed.feedUrl})
     })
@@ -105,6 +106,7 @@ class FeedSpider{
       }else{
         // already stored
         // console.log("already stored")
+        return Promise.all([])
       }
     })
     .then( ()=>{
@@ -132,7 +134,10 @@ class FeedSpider{
   }
   authenticate(user){
     // return promise with count, you can judge from the count <> 1
-    return this.exist(this.userC,user)
+    return this.exist(this.userC,user).then( (count) => {return count==1})
+  }
+  addNewUser(user){
+    this.insert(this.userC,user)
   }
   getUserData(user){
     // get user data: subscribe,read,star,collection,status...
@@ -160,8 +165,9 @@ class FeedSpider{
       })
     })
   }
-  updateUserSub(user,data){
-    return this.userC.update(user,{$set:data})
+  updateUser(user,data){
+    // updateUser
+    return this.userC.update(user,data)
   }
   markRead(user,fid){
     if(user.id){
@@ -175,14 +181,20 @@ var feed = new FeedSpider()
 var allData = {}
 feed.db.open((err, db) =>{
   // list stored with all promises
+  //
+  if(err){console.log(err)}
 
   var promises = []
   var allData = {}
 
-  var user = {
+  var user1 = {
     username:"taoalpha",
     useremail:"iamzhoutao92@gmail.com",
-    userpass:""
+    userpass:"zhou1992"
+  }
+  var user = {
+    email:"asd@12.com",
+    pass:"asd"
   }
   var data = {
     subscribe:[
@@ -190,6 +202,11 @@ feed.db.open((err, db) =>{
       "http://javascriptweekly.com/rss/20e32i2j"
     ]
   }
+
+  //feed.authenticate(user).then( (exist) => {
+  //  console.log(exist)
+  //  db.close()
+  //})
 
   //var feedUrls = ["http://songshuhui.net/feed","http://taoalpha.me/blog/feed.xml","http://www.kanzhihu.com/feed"]
 
@@ -201,10 +218,21 @@ feed.db.open((err, db) =>{
   //  })
   //})
 
-  feed.find(feed.siteC,{},{feedUrl:1,lastUpdateDuration:1,lastCrawled:1,_id:0}).toArray().then((data) => {
-    console.log(data)
+  feed.find(feed.siteC,{},{feedUrl:1,lastUpdateDuration:1,lastCrawled:1,_id:0}).sort({lastUpdateDuration:-1}).toArray().then((data) => {
+    console.log(
+      data
+      //data.filter( (v) => {
+      //  return v.lastUpdateDuration > 0.5
+      //})
+    )
     db.close()
   })
+
+  //feed.addNewUser(user)
+  //feed.updateUser(user,{$pull:{subscribe:"http://www.guokr.com/rss/"}}).then( (doc)=>{
+  //  db.close()
+  //})
+
   /*
    * Crawl all sites we currently have
   // list stored with all promises
