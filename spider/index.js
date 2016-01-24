@@ -54,7 +54,9 @@ class FeedSpider{
           duration *= 1.5
         }else{
           // decrease the duration according to the number of updates it has during the last crawl
-          duration *= 0.5*(Math.floor( 1 / Math.max(1,(numUpdates - 5)/10)))
+          duration *= (0.5*(Math.floor( 1 / Math.max(1,(numUpdates - 5)/10))))
+          // update the lastvalidupdated time
+          this.siteC.update({feedUrl: feedUrl},{$set:{lastUpdated: moment().format()}})
         }
         // set the upper and lower limit for duration, and also only keep 3 numbers after the period
         duration = duration > 100 ? 100 : Number(duration).toFixed(3)
@@ -149,25 +151,42 @@ class FeedSpider{
   getSiteBySub(sub){
     return this.find(this.siteC,{feedUrl:{$in:sub}},{feedUrl:1,title:1,link:1}).toArray()
   }
-  getDataByFeed(url,allData,read,limit,skip){
-    limit = limit || 10
-    skip = skip || 0
-    return this.find(this.feedC,{feedUrl:url},{title:1,link:1}).sort({"publishedDate":-1}).skip(skip).limit(limit).toArray().then( (data) =>{
+  getDataByFeed(query){
+    query.amount = query.amount || 20
+    query.skip = query.skip || 0
+    return this.find(this.feedC,{feedUrl:query.feedUrl},{title:1,link:1}).sort({"publishedDate":-1}).skip(query.skip).limit(query.amount).toArray().then( (data) =>{
       data.forEach( (v) => {
         v.read = 0
-        allData[url].unreadNum = allData[url].unreadNum || 0
-        allData[url].unreadNum ++
-        if(read.indexOf(v._id.toString())>-1){
+        query.feedData.unreadNum = query.feedData.unreadNum || 0
+        query.feedData.unreadNum ++
+
+        // store the total number we have looked for this feed
+        query.feedData.totalNum = query.feedData.totalNum || 0
+        query.feedData.totalNum ++
+        // TODO: Speed up this process
+        if(query.readData.indexOf(v._id.toString())>-1){
           v.read = 1
-          allData[url].unreadNum --
+          query.feedData.unreadNum --
         }
-        allData[url].entries.push(v)
+        // FIXME: need save the number of feeds used for skip instead of using current number of feeds
+        if(query.skipRead){
+          if(v.read == 0){
+            query.feedData.entries.push(v)
+          }
+        }else{
+          query.feedData.entries.push(v)
+        }
+        // query.feedData.entries.push(v)
       })
     })
   }
   updateUser(user,data){
     // updateUser
     return this.userC.update(user,data)
+  }
+  deleteFeed(user,feedUrl){
+    var data = {$pull:{subscribe:feedUrl}};
+    return this.updateUser(user,data)
   }
   markRead(user,fid){
     if(user.id){
@@ -218,7 +237,7 @@ feed.db.open((err, db) =>{
   //  })
   //})
 
-  feed.find(feed.siteC,{},{feedUrl:1,lastUpdateDuration:1,lastCrawled:1,_id:0}).sort({lastUpdateDuration:-1}).toArray().then((data) => {
+  feed.find(feed.siteC,{},{feedUrl:1,lastUpdateDuration:1,lastCrawled:1,lastUpdated:1,_id:0}).sort({lastUpdateDuration:-1}).toArray().then((data) => {
     console.log(
       data
       //data.filter( (v) => {
